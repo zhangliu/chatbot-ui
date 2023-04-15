@@ -13,7 +13,7 @@ import { ClearConversations } from './ClearConversations';
 import { PluginKeys } from './PluginKeys';
 
 export const ChatbarSettings = () => {
-  return null
+  return <div />
   const { t } = useTranslation('sidebar');
 
   const {
