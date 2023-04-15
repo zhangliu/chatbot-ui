@@ -13,7 +13,7 @@ export const config = {
   runtime: 'edge',
 };
 
-const Q_LIMIT = 5;
+const Q_LIMIT = 10;
 
 const handler = async (req: Request): Promise<Response> => {
   try {
