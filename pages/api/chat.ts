@@ -13,9 +13,15 @@ export const config = {
   runtime: 'edge',
 };
 
+const Q_LIMIT = 5;
+
 const handler = async (req: Request): Promise<Response> => {
   try {
     const { model, messages, key, prompt, temperature } = (await req.json()) as ChatBody;
+
+    if (messages.length > Q_LIMIT) {
+      return new Response(`您最多提问 ${Q_LIMIT} 个问题，使用次数已用完！`);
+    }
 
     await init((imports) => WebAssembly.instantiate(wasm, imports));
     const encoding = new Tiktoken(
