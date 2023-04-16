@@ -19,6 +19,9 @@ const handler = async (req: Request): Promise<Response> => {
   try {
     const { model, messages, key, prompt, temperature } = (await req.json()) as ChatBody;
 
+    const visitorId = req.cookies?.get('gpt_visitorId')?.value;
+    if (!visitorId) return new Response('认证失败，请联系管理员解决！');
+
     if (messages.length > Q_LIMIT) {
       return new Response(`您最多提问 ${Q_LIMIT} 个问题，使用次数已用完！`);
     }
