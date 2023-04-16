@@ -18,8 +18,7 @@ const Q_LIMIT = 10;
 const handler = async (req: Request): Promise<Response> => {
   try {
     const { model, messages, key, prompt, temperature } = (await req.json()) as ChatBody;
-
-    const visitorId = req.cookies?.get('gpt_visitorId')?.value;
+    const visitorId = (req as any).cookies?.get('gpt_visitorId')?.value;
     if (!visitorId) return new Response('认证失败，请联系管理员解决！');
 
     if (messages.length > Q_LIMIT) {
