@@ -16,18 +16,6 @@ export default function Document(props: Props) {
         <meta name="apple-mobile-web-app-title" content="Chatbot UI"></meta>
       </Head>
       <body>
-        <div dangerouslySetInnerHTML={{
-          __html: `
-            <script>
-              const fpPromise = import('https://openfpcdn.io/fingerprintjs/v3')
-                .then(FingerprintJS => FingerprintJS.load())
-
-              fpPromise
-                .then(fp => fp.get())
-                .then(result => document.cookie = 'gpt_visitorId=' + result.visitorId)
-            </script>
-          `
-        }} />
         <Main />
         <NextScript />
       </body>

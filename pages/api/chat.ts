@@ -8,22 +8,23 @@ import wasm from '../../node_modules/@dqbd/tiktoken/lite/tiktoken_bg.wasm?module
 
 import tiktokenModel from '@dqbd/tiktoken/encoders/cl100k_base.json';
 import { Tiktoken, init } from '@dqbd/tiktoken/lite/init';
+import { ACTION_MAP, NOT_LOGIN_QUERY_LIMIT, LOGINED_QUERY_LIMIT, userCookieKey, phoneReg } from '../../zlSrc/loginHander';
 
 export const config = {
   runtime: 'edge',
 };
 
-const Q_LIMIT = 10;
-
 const handler = async (req: Request): Promise<Response> => {
   try {
     const { model, messages, key, prompt, temperature } = (await req.json()) as ChatBody;
-    const visitorId = (req as any).cookies?.get('gpt_visitorId')?.value;
-    if (!visitorId) return new Response('认证失败，请联系管理员解决！');
 
-    if (messages.length > Q_LIMIT) {
-      return new Response(`您最多提问 ${Q_LIMIT} 个问题，使用次数已用完！`);
+    if (messages.length > NOT_LOGIN_QUERY_LIMIT) {
+      const visitorId = (req as any).cookies?.get(userCookieKey)?.value;
+      if (!visitorId) return new Response(ACTION_MAP.NEED_LOGIN);
+      if (!phoneReg.test(visitorId)) return new Response('认证失败，请加微信：zhangliu2，联系管理员解决！');
     }
+    if (messages.length > LOGINED_QUERY_LIMIT) return new Response(`您的提问次数已经用完，请加微信：zhangliu2，联系管理员处理！`);
+
 
     await init((imports) => WebAssembly.instantiate(wasm, imports));
     const encoding = new Tiktoken(
