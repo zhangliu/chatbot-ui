@@ -8,7 +8,8 @@ import wasm from '../../node_modules/@dqbd/tiktoken/lite/tiktoken_bg.wasm?module
 
 import tiktokenModel from '@dqbd/tiktoken/encoders/cl100k_base.json';
 import { Tiktoken, init } from '@dqbd/tiktoken/lite/init';
-import { ACTION_MAP, NOT_LOGIN_QUERY_LIMIT, LOGINED_QUERY_LIMIT, userCookieKey, phoneReg } from '../../zlSrc/loginHander';
+import { ACTION_MAP, userTokenKey } from '../../zlSrc/loginHander';
+import { getUserInfo, decreaseLimit } from '../../zlSrc/api/user';
 
 export const config = {
   runtime: 'edge',
@@ -18,13 +19,13 @@ const handler = async (req: Request): Promise<Response> => {
   try {
     const { model, messages, key, prompt, temperature } = (await req.json()) as ChatBody;
 
-    if (messages.length > NOT_LOGIN_QUERY_LIMIT) {
-      const visitorId = (req as any).cookies?.get(userCookieKey)?.value;
-      if (!visitorId) return new Response(ACTION_MAP.NEED_LOGIN);
-      if (!phoneReg.test(visitorId)) return new Response('认证失败，请加微信：zhangliu2，联系管理员解决！');
-    }
-    if (messages.length > LOGINED_QUERY_LIMIT) return new Response(`您的提问次数已经用完，请加微信：zhangliu2，联系管理员处理！`);
+    const userToken = (req as any).cookies?.get(userTokenKey)?.value;
+    if (!userToken) return new Response(ACTION_MAP.NEED_LOGIN);
 
+    const userInfo = await getUserInfo(userToken);
+    if (!userInfo) return new Response(ACTION_MAP.ERROR_TOKEN);
+    console.log('get user info:', userInfo);
+    if (!userInfo.limit) return new Response(ACTION_MAP.NEED_LIMIT)
 
     await init((imports) => WebAssembly.instantiate(wasm, imports));
     const encoding = new Tiktoken(
@@ -63,6 +64,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     const stream = await OpenAIStream(model, promptToSend, temperatureToUse, key, messagesToSend);
 
+    decreaseLimit(userToken);
     return new Response(stream);
   } catch (error) {
     console.error(error);
