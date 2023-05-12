@@ -16,7 +16,10 @@ export const tryHandleLogin = (messages: any[]) => {
     if (lastMsg.content === ACTION_MAP.NEED_LOGIN) {
         const message = '请输入您的令牌（若无，请加微信：zhangliu2 申请）';
         let userToken = prompt(message)?.trim() || '';
-        while (!userToken) userToken = prompt(message, userToken)?.trim() || '';
+        if (!userToken) {
+            lastMsg.content = '您未设置口令，无法使用该功能！';
+            return;
+        };
         document.cookie = `${userTokenKey}=${userToken}; max-age=${ONE_DAY * 30}`;
         lastMsg.content = '好的，您已设置令牌，可以继续提问啦！';
         return;
@@ -25,7 +28,10 @@ export const tryHandleLogin = (messages: any[]) => {
     if (lastMsg.content === ACTION_MAP.ERROR_TOKEN) {
         const message = '您的令牌错误，请加微信：zhangliu2 申请';
         let userToken = prompt(message)?.trim() || '';
-        while (!userToken) userToken = prompt(message, userToken)?.trim() || '';
+        if (!userToken) {
+            lastMsg.content = '您未设置口令，无法使用该功能！';
+            return;
+        };
         document.cookie = `${userTokenKey}=${userToken}; max-age=${ONE_DAY * 30}`;
         lastMsg.content = '好的，您已设置令牌，可以继续提问啦！';
         return;
