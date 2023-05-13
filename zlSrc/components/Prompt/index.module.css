@@ -1,0 +1,39 @@
+.prompt-box {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    background-color: #ffffff;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    width: 300px;
+    padding: 20px;
+}
+
+.prompt-title {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.prompt-content {
+    margin-bottom: 20px;
+}
+
+.prompt-content input {
+    width: 100%;
+    border: 1px solid #cccccc;
+    padding: 5px;
+    box-sizing: border-box;
+}
+
+.prompt-buttons {
+    text-align: right;
+    font-size: 14px;
+}
+
+.prompt-buttons button {
+    margin-left: 20px;
+}

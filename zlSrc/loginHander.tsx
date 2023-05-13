@@ -1,3 +1,5 @@
+import Prompt from './components/Prompt';
+
 const ONE_DAY = 24 * 60 * 60;
 
 export const ACTION_MAP = {
@@ -8,14 +10,14 @@ export const ACTION_MAP = {
 
 export const userTokenKey = 'gpt_user_token';
 
-export const tryHandleLogin = (messages: any[]) => {
+export const tryHandleLogin = async (messages: any[]) => {
     const lastMsg = messages[messages.length - 1];
     if (!lastMsg) return false;
     if (lastMsg.role !== 'assistant') return;
 
     if (lastMsg.content === ACTION_MAP.NEED_LOGIN) {
         const message = '请输入您的令牌（若无，请加微信：zhangliu2 申请）';
-        let userToken = prompt(message)?.trim() || '';
+        let userToken = (await Prompt.show(message)).trim() || '';
         if (!userToken) {
             lastMsg.content = '您未设置口令，无法使用该功能！';
             return;
@@ -27,7 +29,7 @@ export const tryHandleLogin = (messages: any[]) => {
 
     if (lastMsg.content === ACTION_MAP.ERROR_TOKEN) {
         const message = '您的令牌错误，请加微信：zhangliu2 申请';
-        let userToken = prompt(message)?.trim() || '';
+        let userToken = (await Prompt.show(message))?.trim() || '';
         if (!userToken) {
             lastMsg.content = '您未设置口令，无法使用该功能！';
             return;
