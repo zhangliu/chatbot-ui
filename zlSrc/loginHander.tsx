@@ -45,6 +45,5 @@ export const tryHandleLogin = async (messages: any[]) => {
         return;
     }
 
-    lastMsg.content = '';
     return;
 }
