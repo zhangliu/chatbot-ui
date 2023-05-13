@@ -31,7 +31,7 @@ export const tryHandleLogin = async (messages: any[]) => {
         const message = '您的令牌错误，请加微信：zhangliu2 申请';
         let userToken = (await Prompt.show(message))?.trim() || '';
         if (!userToken) {
-            lastMsg.content = '您未设置口令，无法使用该功能！';
+            lastMsg.content = '您设置口令错误，无法使用该功能！';
             return;
         };
         document.cookie = `${userTokenKey}=${userToken}; max-age=${ONE_DAY * 30}`;
